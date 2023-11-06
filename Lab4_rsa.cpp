@@ -1,78 +1,98 @@
-#include<iostream>
-#include<math.h>
+#include <iostream>
+#include <math.h>
 using namespace std;
-// find gcd
-int gcd(int a, int b) {
+
+int gcd(int a, int b)
+{
    int t;
-   while(1) {
-      t= a%b;
-      if(t==0)
-      return b;
+   while (1)
+   {
+      t = a % b;
+      if (t == 0)
+         return b;
       a = b;
-      b= t;
+      b = t;
    }
 }
 
-int modInverse(int A, int M){
-     int i=1;
-     while(true){
-     	if(A*i%M == 1) return i;
-     	else i++;
-     }
-	
+int modInverse(int A, int M)
+{
+   int i = 1;
+   while (true)
+   {
+      if (A * i % M == 1)
+         return i;
+      else
+         i++;
+   }
+}
+int modPower(int base, int exponent, int mod)
+{
+   if (mod == 1)
+   {
+      return 0;
+   }
+
+   int result = 1;
+   base = base % mod;
+
+   while (exponent > 0)
+   {
+      result = (base * result) % mod;
+      exponent--;
+   }
+
+   return result;
 }
 
-int modPower(int base, int exponent, int mod) {
-    if (mod == 1) {
-        return 0; 
-    }
-
-    int result = 1;
-    base = base % mod;
-
-    while (exponent > 0) {
-          result =  (base * result) % mod;
-          exponent--;
-    }
-
-    return result;
-}
-
-int main() {
-   double p = 17;
-   double q = 11;
-   
-   double n=p*q;
-   
-   double phi= (p-1)*(q-1);
-  
-   double e=2;
-   
-   //for checking e and phi(n) are coprime.
-   while(e<phi) {
-      if(gcd(e,phi)==1)
+// Function to generate RSA keys
+void generateRSAKeys(double p, double q, double &n, double &e, double &d)
+{
+   n = p * q;
+   double phi = (p - 1) * (q - 1);
+   e = 2;
+   while (e < phi)
+   {
+      if (gcd(e, phi) == 1)
          break;
       else
          e++;
    }
-   
-   double d=modInverse(e,phi);
-   
-   double message = 88;
-   
-   double c = modPower(message,e,n); //encrypt message
-   
-   double m =modPower(c,d,n); //decrypt message
-  
-   cout<<"Original Message = "<<message;
-   cout<<"\n"<<"p = "<<p;
-   cout<<"\n"<<"q = "<<q;
-   cout<<"\n"<<"n = pq = "<<n;
-   cout<<"\n"<<"phi = "<<phi;
-   cout<<"\n"<<"e = "<<e;
-   cout<<"\n"<<"d = "<<d;
-   cout<<"\n"<<"Encrypted message = "<<c;
-   cout<<"\n"<<"Decrypted message = "<<m;
+
+   d = modInverse(e, phi);
+}
+
+int main()
+{
+   double p, q, n, e, d, message;
+   double c, m;
+
+   cout << "RSA Encryption/Decryption" << endl;
+   cout << "--------------------------------------------------------\n"
+        << endl;
+
+   cout << "Enter the first prime number (p): ";
+   cin >> p;
+
+   cout << "Enter the second prime number (q): ";
+   cin >> q;
+
+   generateRSAKeys(p, q, n, e, d);
+   cout << "\nKey Generation:" << endl;
+   cout << "p = " << p << endl;
+   cout << "q = " << q << endl;
+   cout << "n = pq = " << n << endl;
+   cout << "e = " << e << endl;
+   cout << "d = " << d << endl;
+
+   cout << "\nEnter the message: ";
+   cin >> message;
+
+   c = modPower(message, e, n);
+   cout << "\nEncrypted message (Ciphertext) = " << c << endl;
+
+   m = modPower(c, d, n);
+   cout << "\nDecrypted message (Plaintext) = " << m << endl;
 
    return 0;
 }
